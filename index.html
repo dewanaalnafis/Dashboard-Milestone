@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OKR Dashboard - PT Raja Sukses Propertindo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 OKR Dashboard - PT Raja Sukses Propertindo</h1>
+            <p>Milestone-Based OKR Tracking untuk R&D dan Pabrikasi</p>
+        </div>
+
+        <!-- Period & Tab Navigation -->
+        <div class="period-selector">
+            <div>
+                <label>📅 Bulan:</label>
+                <select id="monthSelect" onchange="switchMonth()">
+                    <option value="1">Januari 2025</option>
+                    <option value="2" selected>Februari 2025</option>
+                    <option value="3">Maret 2025</option>
+                    <option value="4">April 2025</option>
+                    <option value="5">Mei 2025</option>
+                    <option value="6">Juni 2025</option>
+                    <option value="7">Juli 2025</option>
+                    <option value="8">Agustus 2025</option>
+                    <option value="9">September 2025</option>
+                    <option value="10">Oktober 2025</option>
+                    <option value="11">November 2025</option>
+                    <option value="12">Desember 2025</option>
+                </select>
+            </div>
+            
+            <div class="division-filter">
+                <button class="division-btn active" data-tab="rnd" onclick="switchTab('rnd')">
+                    🔬 R&D
+                </button>
+                <button class="division-btn" data-tab="pabrikasi" onclick="switchTab('pabrikasi')">
+                    🏭 Pabrikasi
+                </button>
+            </div>
+
+            <button class="btn-add-okr" onclick="openAddOKRModal()">
+                ➕ Add OKR
+            </button>
+        </div>
+
+        <!-- R&D Tab -->
+        <div id="tab-rnd" class="main-tab-content active">
+            <!-- Milestone Timeline -->
+            <div class="milestone-section">
+                <div class="section-title">📊 Milestone Timeline R&D 2025</div>
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <div style="background: transparent;"></div>
+                        <div class="timeline-month">Jan</div>
+                        <div class="timeline-month">Feb</div>
+                        <div class="timeline-month">Mar</div>
+                        <div class="timeline-month">Apr</div>
+                        <div class="timeline-month">Mei</div>
+                        <div class="timeline-month">Jun</div>
+                        <div class="timeline-month">Jul</div>
+                        <div class="timeline-month">Ags</div>
+                        <div class="timeline-month">Sep</div>
+                        <div class="timeline-month">Okt</div>
+                        <div class="timeline-month">Nov</div>
+                        <div class="timeline-month">Des</div>
+                    </div>
+                    <div id="rndTimeline"></div>
+                </div>
+                <div class="timeline-legend">
+                    <div class="legend-item">
+                        <div class="legend-box legend-target"></div>
+                        <span>Target (Filled Cell)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box legend-actual"></div>
+                        <span>Actual - On Time</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OKR Health Cards -->
+            <div class="section-title">🎯 OKR Health Overview - <span id="rndMonthLabel">Februari 2025</span></div>
+            <div id="healthCardsRnd" class="health-cards"></div>
+
+            <!-- WBS Tracking -->
+            <div class="section-title">📋 WBS Tracking & Task Management</div>
+            <div id="okrGroupsRnd"></div>
+        </div>
+
+        <!-- Pabrikasi Tab -->
+        <div id="tab-pabrikasi" class="main-tab-content">
+            <!-- Milestone Timeline -->
+            <div class="milestone-section">
+                <div class="section-title">📊 Milestone Timeline Pabrikasi 2025</div>
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <div style="background: transparent;"></div>
+                        <div class="timeline-month">Jan</div>
+                        <div class="timeline-month">Feb</div>
+                        <div class="timeline-month">Mar</div>
+                        <div class="timeline-month">Apr</div>
+                        <div class="timeline-month">Mei</div>
+                        <div class="timeline-month">Jun</div>
+                        <div class="timeline-month">Jul</div>
+                        <div class="timeline-month">Ags</div>
+                        <div class="timeline-month">Sep</div>
+                        <div class="timeline-month">Okt</div>
+                        <div class="timeline-month">Nov</div>
+                        <div class="timeline-month">Des</div>
+                    </div>
+                    <div id="pabrikasiTimeline"></div>
+                </div>
+                <div class="timeline-legend">
+                    <div class="legend-item">
+                        <div class="legend-box legend-target"></div>
+                        <span>Target (Filled Cell)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box legend-actual"></div>
+                        <span>Actual - On Time</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OKR Health Cards -->
+            <div class="section-title">🎯 OKR Health Overview - <span id="pabrikasiMonthLabel">Februari 2025</span></div>
+            <div id="healthCardsPabrikasi" class="health-cards"></div>
+
+            <!-- WBS Tracking -->
+            <div class="section-title">📋 WBS Tracking & Task Management</div>
+            <div id="okrGroupsPabrikasi"></div>
+        </div>
+    </div>
+
+    <!-- Add OKR Modal -->
+    <div id="addOKRModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Tambah OKR Baru</h2>
+                <span class="close" onclick="closeAddOKRModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addOKRForm">
+                    <div class="form-group">
+                        <label>Judul OKR (akan muncul di Milestone) *</label>
+                        <input type="text" id="okrTitle" placeholder="Contoh: Batching Plant Setup" required>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Divisi *</label>
+                            <select id="okrDivision" required>
+                                <option value="">Pilih Divisi</option>
+                                <option value="rnd">🔬 R&D</option>
+                                <option value="pabrikasi">🏭 Pabrikasi</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Bulan Target *</label>
+                            <select id="okrMonth" required>
+                                <option value="">Pilih Bulan</option>
+                                <option value="1">Januari</option>
+                                <option value="2">Februari</option>
+                                <option value="3">Maret</option>
+                                <option value="4">April</option>
+                                <option value="5">Mei</option>
+                                <option value="6">Juni</option>
+                                <option value="7">Juli</option>
+                                <option value="8">Agustus</option>
+                                <option value="9">September</option>
+                                <option value="10">Oktober</option>
+                                <option value="11">November</option>
+                                <option value="12">Desember</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Kategori Milestone (untuk R&D) *</label>
+                        <select id="okrCategory" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="Profitability RnD">Profitability RnD</option>
+                            <option value="Pembangunan Rumah - Riset Metode">Pembangunan Rumah - Riset Metode</option>
+                            <option value="Pembangunan Rumah - Riset Product">Pembangunan Rumah - Riset Product</option>
+                            <option value="Pembangunan Infra - Riset Product">Pembangunan Infra - Riset Product</option>
+                            <option value="Timeline OKR Pabrik - Alat Produksi">Timeline OKR Pabrik - Alat Produksi</option>
+                            <option value="Timeline OKR Pabrik - Infrastruktur">Timeline OKR Pabrik - Infrastruktur</option>
+                            <option value="Timeline OKR Pabrik - SDM">Timeline OKR Pabrik - SDM</option>
+                            <option value="Operation Perspective - Produksi">Operation Perspective - Produksi</option>
+                        </select>
+                    </div>
+
+                    <hr style="margin: 25px 0;">
+                    <h3 style="color: #667eea;">📋 WBS & Tasks</h3>
+                    <div id="wbsContainer"></div>
+                    <button type="button" class="btn-add-task" onclick="addWBSItem()">➕ Add WBS</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeAddOKRModal()">Batal</button>
+                <button type="button" class="btn-primary" onclick="saveNewOKR()">💾 Simpan OKR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Task Modal -->
+    <div id="updateTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 Update Task</h2>
+                <span class="close" onclick="closeUpdateTaskModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="updateTaskForm">
+                    <input type="hidden" id="updateTaskId">
+                    
+                    <div class="form-group">
+                        <label>Nama Task</label>
+                        <input type="text" id="updateTaskName" readonly style="background: #f8f9fa;">
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>PIC</label>
+                            <input type="text" id="updateTaskPIC" readonly style="background: #f8f9fa;">
+                        </div>
+                        <div class="form-group">
+                            <label>Status *</label>
+                            <select id="updateTaskStatus" required>
+                                <option value="not-yet">Not Yet</option>
+                                <option value="on-track">On Track</option>
+                                <option value="potential-late">Potential Late</option>
+                                <option value="late">Late</option>
+                                <option value="done-ontime">Done - On Time</option>
+                                <option value="done-late">Done - Late</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Progress (%) *</label>
+                        <input type="number" id="updateTaskProgress" min="0" max="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🚨 Issue / Kendala <span style="color: red;">(Wajib untuk Late/Potential Late)</span></label>
+                        <textarea id="updateTaskIssue" rows="3" placeholder="Jelaskan kendala yang dihadapi..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>✅ Yang Sudah Dilakukan PIC</label>
+                        <textarea id="updateTaskActionDone" rows="3" placeholder="Tindakan yang sudah dilakukan..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📋 Yang Akan Dilakukan (Action Plan)</label>
+                        <textarea id="updateTaskActionPlan" rows="3" placeholder="Rencana tindakan selanjutnya..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeUpdateTaskModal()">Batal</button>
+                <button type="button" class="btn-primary" onclick="saveTaskUpdate()">💾 Simpan Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="milestone.js"></script>
+    <script src="okr-cards.js"></script>
+    <script src="wbs-tracking.js"></script>
+    <script src="modal.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
